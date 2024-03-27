@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Detection</title>
+</head>
+<body>
+    <h2>Upload Image</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" accept="image/*" required>
+        <button type="submit">Submit</button>
+    </form>
+    <p id="resultMessage"></p>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData();
+            var fileInput = document.getElementById('fileInput');
+            formData.append('image', fileInput.files[0]);
+
+            fetch('/detect_text', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('resultMessage').innerText = "Text 'Pixelflames' is present in the uploaded image. Success!";
+                } else {
+                    document.getElementById('resultMessage').innerText = "Text 'Pixelflames' is not present in the uploaded image.";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('resultMessage').innerText = "An error occurred. Please try again.";
+            });
+        });
+    </script>
+</body>
+</html>
